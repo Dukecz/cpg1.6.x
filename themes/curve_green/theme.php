@@ -650,7 +650,7 @@ function add_share_codes_to_pic_info(&$info)
 	global $CONFIG, $CPG_PHP_SELF, $CURRENT_PIC_DATA;
 
 	$detailUrl = $CONFIG["ecards_more_pic_target"] . (substr($CONFIG["ecards_more_pic_target"], -1) == '/' ? '' : '/') . basename($CPG_PHP_SELF) . "?pid={$CURRENT_PIC_DATA['pid']}";
-	$imageUrl = $CONFIG["ecards_more_pic_target"] . (substr($CONFIG["ecards_more_pic_target"], -1) == '/' ? '' : '/') . basename($CPG_PHP_SELF) . $CURRENT_PIC_DATA['url'];
+	$imageUrl = $CONFIG["ecards_more_pic_target"] . (substr($CONFIG["ecards_more_pic_target"], -1) == '/' ? '' : '/') . $CURRENT_PIC_DATA['url'];
 
 	$info['PHPBB code'] = sprintf('[url=%s][img]%s[/img][/url]', $detailUrl, $imageUrl);
 	$info['HTML code'] = htmlentities(sprintf('<a href="%s"><img src="%s" alt="%s"></a>', $detailUrl, $imageUrl, $CURRENT_PIC_DATA['title']));

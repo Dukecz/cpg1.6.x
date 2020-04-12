@@ -474,9 +474,9 @@ function theme_main_menu($which)
         if ($CONFIG['display_sidebar_user'] != 2) {
           template_extract_block($template_sys_menu, 'sidebar');
         }
-        
+
         list($timestamp, $form_token) = getFormToken();
-        
+
     } else { // visitor is not logged in
         if ($CONFIG['contact_form_guest_enable'] == 0) {
           template_extract_block($template_sys_menu, 'contact');
@@ -486,7 +486,7 @@ function theme_main_menu($which)
         }
         template_extract_block($template_sys_menu, 'logout');
         template_extract_block($template_sys_menu, 'my_profile');
-        
+
         $timestamp = $form_token = '';
     }
 
@@ -644,3 +644,44 @@ function theme_main_menu($which)
 /******************************************************************************
 ** Section <<<theme_main_menu>>> - END
 ******************************************************************************/
+
+function add_share_codes_to_pic_info(&$info)
+{
+	global $CONFIG, $CPG_PHP_SELF, $CURRENT_PIC_DATA;
+
+	$detailUrl = $CONFIG["ecards_more_pic_target"] . (substr($CONFIG["ecards_more_pic_target"], -1) == '/' ? '' : '/') . basename($CPG_PHP_SELF) . "?pid={$CURRENT_PIC_DATA['pid']}";
+	$imageUrl = $CONFIG["ecards_more_pic_target"] . (substr($CONFIG["ecards_more_pic_target"], -1) == '/' ? '' : '/') . basename($CPG_PHP_SELF) . $CURRENT_PIC_DATA['url'];
+
+	$info['PHPBB code'] = sprintf('[url=%s][img]%s[/img][/url]', $detailUrl, $imageUrl);
+	$info['HTML code'] = htmlentities(sprintf('<a href="%s"><img src="%s" alt="%s"></a>', $detailUrl, $imageUrl, $CURRENT_PIC_DATA['title']));
+}
+
+/******************************************************************************
+ ** Section <<<theme_html_picinfo>>> - START
+ ******************************************************************************/
+function theme_html_picinfo(&$info)
+{
+	global $lang_picinfo, $CONFIG, $CURRENT_PIC_DATA, $LINEBREAK;
+
+	if ($CONFIG['picinfo_movie_download_link']) {
+		$path_to_pic = $CONFIG['fullpath'] . $CURRENT_PIC_DATA['filepath'] . $CURRENT_PIC_DATA['filename'];
+		$mime_content = cpg_get_type($CURRENT_PIC_DATA['filename']);
+		if ($mime_content['content']=='movie') {
+			$info[$lang_picinfo['download_URL']] = '<a href="' . $CONFIG["ecards_more_pic_target"] . (substr($CONFIG["ecards_more_pic_target"], -1) == '/' ? '' : '/') . $path_to_pic.'">'. $lang_picinfo['movie_player'] .'</a>';
+		}
+	}
+
+	add_share_codes_to_pic_info($info);
+
+	$html = '';
+	$html .= '        <tr><td colspan="2" class="tableh2">'.$lang_picinfo['title'].'</td></tr>' . $LINEBREAK;
+	$template = '        <tr><td class="tableb tableb_alternate" valign="top" >%s:</td><td class="tableb tableb_alternate">%s</td></tr>' . $LINEBREAK;
+	foreach ($info as $key => $value) {
+		$html .= sprintf($template, $key, $value);
+	}
+
+	return $html;
+}
+/******************************************************************************
+ ** Section <<<theme_html_picinfo>>> - END
+ ******************************************************************************/
